@@ -557,7 +557,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20c8da961ef25f944bd6e77b909d1a6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Fractal
-  depth: 6
+  depth: 8
+  mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  material: {fileID: 2100000, guid: 054df010edbbcb747bbd3d1ff64e19d1, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
