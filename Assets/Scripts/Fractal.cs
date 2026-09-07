@@ -56,9 +56,9 @@ public class Fractal : MonoBehaviour
 			*/
 		}
 	}
-	struct FractalPart { 
+	struct FractalPart {
 		public float3 direction, worldPosition;
-		public Quaternion rotation, worldRotation;
+		public quaternion rotation, worldRotation;
 		public float spinAngle;
 	}
 	static float3[] directions = {
@@ -161,6 +161,7 @@ public class Fractal : MonoBehaviour
 			}.Schedule(parts[li].Length, jobHandle);
 			
 		}
+		//complete jobhandle if there is a dependency
 		jobHandle.Complete();
 		
 		for (int i = 0; i < matricesBuffers.Length; i++) {
