@@ -11,10 +11,7 @@ partial struct whatever : ISystem
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-        /*
-        var e = state.EntityManager.CreateEntity();
-        state.EntityManager.SetName(e, "myEntity");
-        */
+       state.RequireForUpdate<tag1>();
     }
 
     [BurstCompile]
@@ -43,4 +40,6 @@ partial struct whatever : ISystem
     {
         
     }
+
+    
 }
