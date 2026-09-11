@@ -2,6 +2,7 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Rendering;
 using Unity;
 using UnityEngine;
 
@@ -41,8 +42,31 @@ partial struct RocketSystem : ISystem
             } else
             {
                 rocket.ValueRW.blown = true;
+                var newColour = float4.zero;
+                switch (_random.NextInt(0,5))
+                {
+                    case 0:
+                        newColour = new float4(1,0,0,1);
+                        break;
+                    case 1:
+                        newColour = new float4(1,0,1,1);
+                        break;
+                    case 2:
+                        newColour = new float4(0,0,1,1);
+                        break;
+                    case 3:
+                        newColour = new float4(1,1,0,1);
+                        break;
+                    case 4:
+                        newColour = new float4(0,1,0,1);
+                        break;
+                    default:
+                        break;
+                }
                 for (int i = 0; i < rocket.ValueRW.flares; i++)
                 {
+
+
                     Entity flare = state.EntityManager.Instantiate(spawner.ValueRO.flare);
                     state.EntityManager.SetComponentData(flare, LocalTransform.FromPosition(trans.ValueRO.Position));
                     var flaredata = state.EntityManager.GetComponentData<Flare>(flare);
@@ -52,6 +76,12 @@ partial struct RocketSystem : ISystem
                     {
                        resistance = 4f,
                        velocity = new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 20 + velocity.ValueRO.velocity 
+                    });
+                    state.EntityManager.SetComponentData(
+                    flare,
+                    new MyBaseColor
+                    {
+                        color = newColour
                     });
                 }
                 velocity.ValueRW.velocity += new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 10;
@@ -147,7 +177,7 @@ partial struct RocketSystem : ISystem
             {
                 for (int r = 0; r < spawner.ValueRO.rocketRows; r++)
                 {
-                    float row = r % 2 == 0? r*spacing : -r *spacing -1;
+                    float row = r % 2 == 0? r*spacing : -r *spacing -spacing;
                     float col = c * spacing;
                     
                     Entity rocket = state.EntityManager.Instantiate(spawner.ValueRO.rocket);

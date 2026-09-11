@@ -165,8 +165,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FWSettings
   _rocketPrefab: {fileID: 9136967393407443590, guid: 62246fec5afbf374091bbfa074003ea3, type: 3}
   _flarePrefab: {fileID: 2910520937344874092, guid: 55d906803fe3a3944acc0d1c2990b948, type: 3}
-  _rocketRows: 50
-  _rocketColumns: 50
+  _rocketRows: 100
+  _rocketColumns: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
