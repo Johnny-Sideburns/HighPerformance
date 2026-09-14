@@ -3,7 +3,7 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-
+[WithAll(typeof(tag1))]
 [BurstCompile]
 public partial struct MovePosX : IJobEntity
 {

@@ -3,21 +3,36 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Rendering;
+using Unity;
 using UnityEngine;
-
 partial struct whatever : ISystem
 {
+    float dumbtime;
+    bool addTag;
+    bool removeTag;
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-       state.RequireForUpdate<tag1>();
+       //state.RequireForUpdate<tag1>();
+        dumbtime = 0f;
+        addTag = true;
+        
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        EntityCommandBuffer ecb =
+        SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>()
+        .CreateCommandBuffer (state.WorldUnmanaged );
         var elapsedTime = (float)SystemAPI.Time.ElapsedTime;
         float dt = (float)SystemAPI.Time.DeltaTime;
+        dumbtime += dt;
+        if (dumbtime > 1)
+        {
+            addTag = addTag == false;
+        }
 
         var job1 = new MovePosX
         {
@@ -28,8 +43,17 @@ partial struct whatever : ISystem
         {
             dt = dt
         }.Schedule(job1);
-        state.Dependency = job2;
         
+        var job3 = new AddTag
+        {
+            elapsedTime = dumbtime,
+            ecb = ecb,
+            addTag = addTag
+        }.Schedule(job2);
+
+        state.Dependency = job3;
+        dumbtime = dumbtime > 1? 0 : dumbtime;
+
         //RefRW - read and write data
         // RefRO - Readonly data
         /*
