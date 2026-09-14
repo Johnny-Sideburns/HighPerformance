@@ -17,6 +17,8 @@ partial struct RocketSystem : ISystem
         _initiated = false;
         _gravity = 9.82f;
         _random = new Unity.Mathematics.Random(123124);
+       state.RequireForUpdate<Rocket>();
+
     }
 
     [BurstCompile]
@@ -154,7 +156,13 @@ partial struct RocketSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
 
+        new ApplyVelocity
+        {
+            dt = dt,
+            _gravity = _gravity
+        }.ScheduleParallel();
         //apply velocity
+        /*
         foreach (var (trans, thing) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Vel>>())
         {
 
@@ -169,6 +177,7 @@ partial struct RocketSystem : ISystem
 
             thing.ValueRW.velocity.y = trans.ValueRW.Position.y <= 0? 0 : thing.ValueRO.velocity.y - _gravity *dt;
         }
+        */
 
         // Initiation of rockets... will only happen at first
         if (_initiated) return;

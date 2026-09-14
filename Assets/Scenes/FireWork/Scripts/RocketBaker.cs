@@ -10,7 +10,7 @@ public class RocketBaker : MonoBehaviour
     public float _fireDownPower;
     public float _resistance;
     public float _secondaryFuse;
-    public float _flares;
+    public int _flares;
     public float _exhaustInterval;
     public float _lastExhaust;
     class baker: Baker<RocketBaker>

@@ -141,6 +141,6 @@ MonoBehaviour:
   _fireDownPower: 25
   _resistance: 0.2
   _secondaryFuse: 5
-  _flares: 25
+  _flares: 27
   _exhaustInterval: 0.01
   _lastExhaust: 0
