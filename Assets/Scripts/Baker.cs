@@ -15,6 +15,8 @@ public class RandomDataBaker : MonoBehaviour
                 speed = authoring._speed,
             });
             AddComponent<tag1>(entity);
+            //AddComponent<MoveRightTag>(entity);
+            //AddComponent<MoveUpTag>(entity);
         }
         
     }
@@ -30,3 +32,7 @@ public struct tag1 : IComponentData
 {
     
 }
+public struct MoveLeftTag : IComponentData {}
+public struct MoveRightTag : IComponentData {}
+public struct MoveUpTag : IComponentData {}
+public struct MoveDownTag : IComponentData {}

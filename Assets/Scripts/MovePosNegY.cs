@@ -4,13 +4,13 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-[WithAll(typeof(MoveRightTag))]
+[WithAll(typeof(MoveDownTag))]
 [BurstCompile]
-public partial struct MovePosX : IJobEntity
+public partial struct MovePosNegY : IJobEntity
 {
     public float dt;
     public void Execute(ref LocalTransform trans)
     {
-        trans.Position += new float3(1,0,0) * dt;
+        trans.Position += new float3(0,-1,0) * dt;
     }
 }

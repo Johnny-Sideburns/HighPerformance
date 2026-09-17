@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[WithAll(typeof(MoveUpTag))]
 [BurstCompile]
 public partial struct MovePosY : IJobEntity
 {

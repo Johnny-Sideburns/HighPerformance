@@ -10,19 +10,11 @@ public partial struct AddTag : IJobEntity
 {
     public float elapsedTime;
     public EntityCommandBuffer ecb;
-    public bool addTag;
-    public void Execute(ref LocalTransform trans, Entity entity)
+    public ComponentType addTag;
+    public ComponentType removeTag;
+    public void Execute(Entity entity)
     {
-        if (elapsedTime > 1)
-        {
-            if (addTag)
-            {
-                ecb.AddComponent<tag1>(entity);
-            } else
-            {
-                ecb.RemoveComponent<tag1>(entity);
-            }
-
-        }
+        ecb.RemoveComponent(entity, removeTag);
+        ecb.AddComponent(entity, addTag);
     }
 }

@@ -6,18 +6,18 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity;
 using UnityEngine;
+using Unity.Collections;
 partial struct whatever : ISystem
 {
     float dumbtime;
-    bool addTag;
-    bool removeTag;
+    private FixedList128Bytes<ComponentType> tags;
+    
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
-       //state.RequireForUpdate<tag1>();
+        state.RequireForUpdate<tag1>();
         dumbtime = 0f;
-        addTag = true;
-        
+        tags = new FixedList128Bytes<ComponentType> {ComponentType.ReadWrite<MoveRightTag>(), ComponentType.ReadWrite<MoveUpTag>(), ComponentType.ReadWrite<MoveLeftTag>(), ComponentType.ReadWrite<MoveDownTag>()};
     }
 
     [BurstCompile]
@@ -31,28 +31,43 @@ partial struct whatever : ISystem
         dumbtime += dt;
         if (dumbtime > 1)
         {
-            addTag = addTag == false;
+
+            new AddTag
+            {
+                elapsedTime = dumbtime,
+                ecb = ecb,
+                addTag = tags[0],
+                removeTag = tags[2]
+
+            }.Schedule();
+            var tmp = tags[0];
+            tags.Remove(tmp);
+            tags.Add(tmp);
         }
-
-        var job1 = new MovePosX
-        {
-            dt = dt
-        }.Schedule(state.Dependency);
-
-        var job2 = new MovePosY
-        {
-            dt = dt
-        }.Schedule(job1);
-        
-        var job3 = new AddTag
-        {
-            elapsedTime = dumbtime,
-            ecb = ecb,
-            addTag = addTag
-        }.Schedule(job2);
-
-        state.Dependency = job3;
         dumbtime = dumbtime > 1? 0 : dumbtime;
+
+        new MovePosX
+        {
+            dt = dt
+        }.Schedule();
+
+        new MovePosY
+        {
+            dt = dt
+        }.Schedule();
+        
+
+        new MovePosNegX
+        {
+            dt = dt
+        }.Schedule();
+
+        new MovePosNegY
+        {
+            dt = dt
+        }.Schedule();
+
+        //state.Dependency = job2;
 
         //RefRW - read and write data
         // RefRO - Readonly data
