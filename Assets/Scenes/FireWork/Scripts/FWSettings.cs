@@ -13,7 +13,7 @@ public class FWSettings : MonoBehaviour
         public override void Bake(FWSettings authoring)
         {
             var entity = GetEntity(TransformUsageFlags.None);
-            AddComponent(entity, new Spawner
+            AddComponent(entity, new RocketSpawner
             {
                 rocket = GetEntity(authoring._rocketPrefab , TransformUsageFlags.Dynamic),
                 rocketRows = authoring._rocketRows,
@@ -24,7 +24,7 @@ public class FWSettings : MonoBehaviour
     }
     
 }
-public struct Spawner : IComponentData
+public struct RocketSpawner : IComponentData
 {
     public Entity rocket;
     public int rocketRows;

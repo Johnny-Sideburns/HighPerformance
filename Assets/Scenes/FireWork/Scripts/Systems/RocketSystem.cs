@@ -17,7 +17,7 @@ partial struct RocketSystem : ISystem
         _initiated = false;
         _gravity = 9.82f;
         _random = new Unity.Mathematics.Random(123124);
-       state.RequireForUpdate<Rocket>();
+        state.RequireForUpdate<RocketSpawner>();
 
     }
 
@@ -26,7 +26,7 @@ partial struct RocketSystem : ISystem
     {
         var elapsedTime = (float)SystemAPI.Time.ElapsedTime;
         var dt = (float)SystemAPI.Time.DeltaTime;
-        var spawner = SystemAPI.GetSingletonRW<Spawner>();
+        var spawner = SystemAPI.GetSingletonRW<RocketSpawner>();
 
         foreach(var (rocket, velocity, trans) in SystemAPI.Query<RefRW<Rocket>, RefRW<Vel>, RefRW<LocalTransform>>())
         {
