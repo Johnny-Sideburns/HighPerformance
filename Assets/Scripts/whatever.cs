@@ -23,9 +23,7 @@ partial struct whatever : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb =
-        SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>()
-        .CreateCommandBuffer (state.WorldUnmanaged );
+        EntityCommandBuffer ecb = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer (state.WorldUnmanaged);
         var elapsedTime = (float)SystemAPI.Time.ElapsedTime;
         float dt = (float)SystemAPI.Time.DeltaTime;
         dumbtime += dt;

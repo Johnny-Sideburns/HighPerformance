@@ -59,3 +59,5 @@ public struct Vel : IComponentData
     public float3 velocity;
     public float resistance;
 }
+
+public struct ToExplode : IComponentData{}

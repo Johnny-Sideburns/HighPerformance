@@ -24,11 +24,12 @@ partial struct RocketSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var elapsedTime = (float)SystemAPI.Time.ElapsedTime;
         var dt = (float)SystemAPI.Time.DeltaTime;
         var spawner = SystemAPI.GetSingletonRW<RocketSpawner>();
+        //var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
+        EntityCommandBuffer ecb = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer (state.WorldUnmanaged);
 
-        foreach(var (rocket, velocity, trans) in SystemAPI.Query<RefRW<Rocket>, RefRW<Vel>, RefRW<LocalTransform>>())
+        foreach(var (rocket, velocity, trans, entity) in SystemAPI.Query<RefRW<Rocket>, RefRW<Vel>, RefRW<LocalTransform>>().WithEntityAccess())
         {
             if (rocket.ValueRO.blown) continue;
             //check the fuse if there still is stuff left continue..
@@ -43,7 +44,10 @@ partial struct RocketSystem : ISystem
                 rocket.ValueRW.secondaryFuse = rocket.ValueRO.secondaryFuse - dt <= 0? 0: rocket.ValueRO.secondaryFuse -dt;
             } else
             {
+                ecb.AddComponent<ToExplode>(entity);
                 rocket.ValueRW.blown = true;
+                /*
+                var col = _random.NextInt(0,5);
                 var newColour = float4.zero;
                 switch (_random.NextInt(0,5))
                 {
@@ -87,6 +91,7 @@ partial struct RocketSystem : ISystem
                     });
                 }
                 velocity.ValueRW.velocity += new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 10;
+                */
                 
             }
 
@@ -136,7 +141,6 @@ partial struct RocketSystem : ISystem
         }
 
         //flares burn out...
-        var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         foreach (var (trans, flare, entity) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Flare>>().WithEntityAccess())
         {
             if (flare.ValueRO.hangTime <= 0)
@@ -144,7 +148,6 @@ partial struct RocketSystem : ISystem
                 flare.ValueRW.size -= flare.ValueRO.shrinkage *dt;
                 if (flare.ValueRO.size <= 0.001)
                 {
-                    //state.EntityManager.DestroyEntity(entity);
                     ecb.DestroyEntity(entity);
                     continue;
                 }
@@ -153,14 +156,24 @@ partial struct RocketSystem : ISystem
             }
             flare.ValueRW.hangTime -= dt;
         }
-        ecb.Playback(state.EntityManager);
-        ecb.Dispose();
+        
+        /*
+        new ExplodeRocket
+        {
+          ecb = ecb,
+          spawner = spawner
+        }.Schedule();
+        */
 
         new ApplyVelocity
         {
             dt = dt,
             _gravity = _gravity
         }.ScheduleParallel();
+        
+        //ecb.Playback(state.EntityManager);
+
+        //ecb.Dispose();
         //apply velocity
         /*
         foreach (var (trans, thing) in SystemAPI.Query<RefRW<LocalTransform>, RefRW<Vel>>())
