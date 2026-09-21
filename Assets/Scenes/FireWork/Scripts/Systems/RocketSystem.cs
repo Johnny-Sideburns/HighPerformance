@@ -24,7 +24,7 @@ partial struct RocketSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var dt = (float)SystemAPI.Time.DeltaTime;
+        var dt = SystemAPI.Time.DeltaTime;
         var spawner = SystemAPI.GetSingletonRW<RocketSpawner>();
         //var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         var ecb = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer (state.WorldUnmanaged);
