@@ -4,15 +4,15 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 [WithAll(typeof(ToExplode))]
-[BurstCompile]
+//[BurstCompile]
 public partial struct ExplodeRocket : IJobEntity
 {
-    public EntityCommandBuffer ecb;
+    public EntityCommandBuffer.ParallelWriter ecb;
     public RocketSpawner spawner;
-    public void Execute(ref LocalTransform trans, ref Rocket rocket, ref Vel velocity, Entity entity)
+    public Random _random;
+    public void Execute([ChunkIndexInQuery] int sortKey, ref LocalTransform trans, ref Rocket rocket, ref Vel velocity, Entity entity)
     {
 
-                var _random = new Random();
                 var newColour = float4.zero;
                 switch (_random.NextInt(0,5))
                 {
@@ -38,38 +38,25 @@ public partial struct ExplodeRocket : IJobEntity
                 {
 
 
-                    Entity flare = ecb.Instantiate(spawner.flare);
-                    //ecb.SetComponentData(flare, LocalTransform.FromPosition(trans.Position));
-                    ecb.AddComponent(flare, LocalTransform.FromPosition(trans.Position));
-                    ecb.AddComponent(flare, new Flare
+                    Entity flare = ecb.Instantiate(sortKey, spawner.flare);
+                    ecb.AddComponent(sortKey, flare, LocalTransform.FromPosition(trans.Position));
+                    ecb.AddComponent(sortKey, flare, new Flare
                     {
                         hangTime = 2f,
                         size = 0.8f,
-                        shrinkage = 0.01f
+                        shrinkage = 0.8f
                     });
-                    /*
-                    var flaredata = ecb.GetComponentData<Flare>(flare);
-                    flaredata.hangTime = 2f;
-                    ecb.SetComponentData(flare, flaredata);
-                    ecb.SetComponentData(flare, new Vel
+                    ecb.AddComponent(sortKey, flare, new Vel
                     {
-                       resistance = 4f,
+                       resistance = 8f,
                        velocity = new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 20 + velocity.velocity 
                     });
-                    */
-                    ecb.AddComponent(flare, new Vel
-                    {
-                       resistance = 4f,
-                       velocity = new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 20 + velocity.velocity 
-                    });
-                    ecb.AddComponent(flare, new MyBaseColor
+                    ecb.AddComponent(sortKey, flare, new MyBaseColor
                     {
                         color = newColour
                     });
                 }
                 velocity.velocity += new float3(_random.NextFloat(-1,1),_random.NextFloat(-1,1),_random.NextFloat(-1,1)) * 10;
-                ecb.RemoveComponent<ToExplode>(entity);
-        /*
-        */
+                ecb.RemoveComponent<ToExplode>(sortKey, entity);
     }
 }

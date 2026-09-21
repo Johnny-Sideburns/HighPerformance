@@ -27,7 +27,9 @@ partial struct RocketSystem : ISystem
         var dt = (float)SystemAPI.Time.DeltaTime;
         var spawner = SystemAPI.GetSingletonRW<RocketSpawner>();
         //var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
-        EntityCommandBuffer ecb = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer (state.WorldUnmanaged);
+        var ecb = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer (state.WorldUnmanaged);
+
+        var ecbParallel = SystemAPI.GetSingleton <BeginSimulationEntityCommandBufferSystem .Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
         foreach(var (rocket, velocity, trans, entity) in SystemAPI.Query<RefRW<Rocket>, RefRW<Vel>, RefRW<LocalTransform>>().WithEntityAccess())
         {
@@ -158,12 +160,13 @@ partial struct RocketSystem : ISystem
         }
         
         /*
+        */
         new ExplodeRocket
         {
-          ecb = ecb,
-          spawner = spawner
-        }.Schedule();
-        */
+          ecb = ecbParallel,
+          spawner = spawner.ValueRW,
+          _random = _random
+        }.ScheduleParallel();
 
         new ApplyVelocity
         {
