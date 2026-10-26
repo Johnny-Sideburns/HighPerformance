@@ -2,21 +2,20 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Rendering;
-using Unity;
-using UnityEngine;
+using Unity.VisualScripting;
 
 partial struct RocketSystem : ISystem
 {
     bool _initiated;
     float _gravity;
-    Unity.Mathematics.Random _random;
+    Random _random;
+
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         _initiated = false;
         _gravity = 9.82f;
-        _random = new Unity.Mathematics.Random(123124);
+        _random = new Random("The blood in my urine tastes too much like iron".GetHashCode().ConvertTo<uint>());
         state.RequireForUpdate<RocketSpawner>();
 
     }
